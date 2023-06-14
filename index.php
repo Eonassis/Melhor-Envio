@@ -10,38 +10,59 @@ $me = new MelhorEnvio($token,"https://www.melhorenvio.com.br/api/v2/me");
 
 $from = new StdClass();
 
-$from->cep = "";
-$from->endereco = "Bairro são";
-$from->numero = "";
+$from->nome = "remetente teste 1";
+$from->cpf = "88877766654";
+$from->telefone = "01199887654";
+$from->email = "teste@teste.com.br";
+$from->endereco = "Rua Afonso Cavalcanti";
+$from->numero = "455";
+$from->bairro = "bela vista";
+$from->cidade = "Rio de Janeiro";
+$from->estado = "RJ";
+$from->cep = "20211901";
 
 $to = new StdClass();
 
-$to->cep = "";
-$to->endereco = "Rua joão";
-$to->numero = "";
+$to->nome = "destino teste 2";
+$to->cpf = "66677755534";
+$to->telefone = "011998876655";
+$to->email = "teste2@teste.com.br";
+$to->endereco = "Rua teste de barros";
+$to->numero = "315";
+$to->bairro = "bela vista";
+$to->cidade = "sul de norte";
+$to->estado = "sp";
+$to->cep = " 08391700";
 
 
 $arrP = array();
 
 $produto = new StdClass();
-$produto->peso = 0.500;
-$produto->largura=12;
+$produto->peso = 0.300;
+$produto->largura=16;
 $produto->altura=4;
-$produto->comprimento = 17;
-$produto->qtd = 2;
+$produto->comprimento = 24;
+$produto->qtd = 1;
+$produto->nome = 0.300;
+$produto->valor = 100.00;
 
-$produto2 = new StdClass();
-$produto2->peso = 5;
-$produto2->largura=10;
-$produto2->altura=5;
-$produto2->comprimento = 14;
-$produto2->qtd = 1;
 
+$servico = 1; // 1 pac, 2 sedex
+
+$services = "1,2,6,9,12,14"; // 1 Correios, 2 Jadlog, 6 LATAM Cargo, 9 Azul Cargo Express, 12 Buslog, 14 Loggi
+ 
 array_push($arrP, $produto);
-array_push($arrP, $produto2);
+ 
+//listar transportadoras 
+//echo json_encode($me->listarTransportadoras());
 
-//echo var_dump($me->listarTransportadoras());
+//calcular frete 
+//echo json_encode($me->calcularFrete($from, $to, $arrP,null,$services));
 
-echo json_encode($me->calcularFrete($from, $to, $arrP,null,null));
+//incluir carrinho
+echo json_encode($me->incluir_carrinho($from, $to, $produto, $servico));
+
+ //redirect para https://melhorenvio.com.br/carrinho
+
 
 ?>
