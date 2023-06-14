@@ -49,14 +49,10 @@ class MelhorEnvio{
 
 		$parametros = array(
 			"from" => [
-				"postal_code" => $from->cep,
-				"address" => $from->endereco,
-				"number" => $from->numero
+				"postal_code" => $from->cep
 			],
 			"to" => [
-				"postal_code" => $to->cep,
-				"address" => $to->endereco,
-				"number" => $to->numero
+				"postal_code" => $to->cep
 			],
 			"products" => [],
 			"options" => [
@@ -64,7 +60,7 @@ class MelhorEnvio{
 			    "own_hand" => false, 
 			    "collect" => false
 			],
-			"services" => "1,2"
+			"services" => "1,2,6,9,12,14"
 		);
 		
 		$indice = 0;
@@ -112,10 +108,21 @@ class MelhorEnvio{
 
 			foreach ($json as $frete) {
 
+
+				if (property_exists($frete, 'name') && property_exists($frete, 'custom_price') && property_exists($frete, 'delivery_time')) {
+					$nomef = $frete->name;
+					$precof = $frete->custom_price;
+					$prazoEntregaf = $frete->delivery_time;
+					}else{
+					$nomef = "nao atende";
+					$precof = "nao atende";
+					$prazoEntregaf = "nao atende";
+					}
+
 				$objeto = array(
-					'nome' => $frete->name,
-					'preco' => $frete->custom_price,
-					'prazoEntrega' => $frete->delivery_time
+					'nome' => $nomef,
+					'preco' => $precof,
+					'prazoEntrega' => $prazoEntregaf
 				);
 
 				$response['fretes'][$indice][] = $objeto;
@@ -126,6 +133,74 @@ class MelhorEnvio{
 
 		return $response;
 	}
+
+
+	public function incluir_carrinho($from, $to, $produto, $service){
+				
+			$parametros = array(
+			"from" => [
+				"name" => $from->nome,
+				"document" => $from->cpf,
+				"phone" => $from->telefone,
+      			"email" => $from->email,
+				"address" => $from->endereco,
+				"number" => $from->numero,
+				"district" => $from->bairro,
+				"city" => $from->cidade,
+    			"state_abbr" => $from->estado,
+				"postal_code" => $from->cep  
+			],
+			"to" => [
+				"name" => $to->nome,
+                "document" => $to->cpf,
+                "phone" => $to->telefone,
+                "email" => $to->email,
+                "address" => $to->endereco,
+                "number" => $to->numero,
+                "district" => $to->bairro,
+                "city" => $to->cidade,
+                "state_abbr" => $to->estado,
+                "postal_code" => $to->cep
+			],
+			"products" => [
+				[
+				"name" => $produto->nome,
+				"quantity" => $produto->qtd,
+				"unitary_value" => $produto->valor
+				]
+			],
+			"volumes" => [
+				  "height" => $produto->altura,
+			      "width" => $produto->largura,
+			      "length" => $produto->comprimento,
+			      "weight" => $produto->peso
+			],
+			"options" => [
+				"receipt" => false, 
+			    "own_hand" => false, 
+			    "collect" => false
+			],
+			"service" => $service
+		);
+		
+		 
+
+
+		$this->curlInstance->postMelhor("{$this->urlBase}/cart", $parametros);
+
+		$resposta = $this->curlInstance->getCallback();
+
+		
+		return $resposta;
+
+	}
+
+
+
+	
+
+	 
+
 
 }
 
